@@ -1,0 +1,27 @@
+{
+  "name": "groovebot",
+  "version": "0.0.1",
+  "description": "A music bot for Mumble",
+  "main": "index.js",
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Strid3r2442/groovebot.git"
+  },
+  "author": "Jack Comer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Strid3r2442/groovebot/issues"
+  },
+  "homepage": "https://github.com/Strid3r2442/groovebot#readme",
+  "dependencies": {
+    "lame": "^1.2.4",
+    "mumble": "^0.3.21",
+    "ytdl-core": "^2.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.8.3"
+  }
+}
