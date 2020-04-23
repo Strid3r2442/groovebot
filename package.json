@@ -17,8 +17,10 @@
   },
   "homepage": "https://github.com/Strid3r2442/groovebot#readme",
   "dependencies": {
-    "lame": "^1.2.4",
+    "fluent-ffmpeg": "^2.1.2",
     "mumble": "^0.3.21",
+    "node-lame": "^1.2.2",
+    "node-samplerate": "git+https://github.com/Prior99/node-samplerate.git",
     "ytdl-core": "^2.1.0"
   },
   "devDependencies": {

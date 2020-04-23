@@ -1,6 +1,6 @@
-import Client from './client';
+import Lame = require('node-lame');
+import Samplerate = require('node-samplerate');
 
-const Lame = require('lame');
 import { Connection, InputStream } from 'mumble'
 import { read, closeSync, unlinkSync, openSync, PathLike } from 'fs';
 
@@ -15,7 +15,7 @@ export default class Player {
 
 	public isPlaying: boolean;
 
-	constructor(connection) {
+	constructor(connection: Connection) {
 		this._connection = connection;
 		this._gain = 0.25;
 		this._buffer = Buffer.alloc(48000);
@@ -50,7 +50,20 @@ export default class Player {
 					this._delete();
 					setTimeout(this._promise.resolve, 500);
 				} else {
-					this._stream.write(buffer.slice(0, bytesRead));
+					const decoder = new Lame.Lame({
+						"output": "buffer",
+					}).setBuffer(buffer.slice(0, bytesRead))
+
+					decoder.decode()
+						.then(() => {
+							// Decoding finished
+							const newBuffer = decoder.getBuffer();
+							const resampled = Samplerate.resample(newBuffer, 48000, 24000, 1);
+							this._stream.write(resampled);
+						})
+						.catch((err) => {
+							throw err;
+						})
 					if (bytesRead < 48000) {
 						this._fillBuffer();
 					}
