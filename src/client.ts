@@ -1,8 +1,6 @@
 import Player from './player';
-import Transcoder from './transcoder';
 
 import Mumble = require('mumble');
-import { PathLike } from 'fs';
 
 export default class Client {
 	private readonly _username: string;
@@ -10,7 +8,6 @@ export default class Client {
 	private readonly _options: Mumble.Options;
 	private _connection: Mumble.Connection;
 	private _player: Player;
-	private _transcoder: Transcoder;
 
 	constructor(username: string, comment?: string, options?: Mumble.Options) {
 		this._username = username;
@@ -34,24 +31,15 @@ export default class Client {
 			connection.on('initialized', () => {
 				this._connection = connection;
 				this._player = new Player(this._connection);
-				this._transcoder = new Transcoder(this);
 				callback(this._connection);
 			})
 			connection.on('message', (msg, user) => {
 				if(msg.startsWith('!')) {
 					const cmd = msg.substring(1);
-					return this._onMessage(cmd, user)
+					return this._onMessage(cmd);
 				}
 			})
 		});
-	}
-
-	/**
-	 * Play a file
-	 * @param filename Path to a file
-	 */
-	public playFile(filename: PathLike) {
-		this._player.playFile(filename);
 	}
 
 	/**
@@ -63,13 +51,17 @@ export default class Client {
 		channel.sendMessage(msg);
 	}
 
+	public static sendMessage(msg: string, connection: Mumble.Connection) {
+		const channel = connection.user.channel;
+		channel.sendMessage(msg);
+	}
+
 	/**
 	 * Message listener
 	 * @param msg The message received
 	 * @param user User that sent the message
 	 */
-	private async _onMessage(msg: string, user: Mumble.User) {
-		const channel = this._connection.user.channel;
+	private async _onMessage(msg: string) {
 		// Strip HTML tags from message
 		msg = msg.replace(/(<([^>]+)>)/ig,"");
 
@@ -79,21 +71,17 @@ export default class Client {
 		switch(cmd) {
 			case 'play':
 				if(args.length > 1) {
-					channel.sendMessage('Invalid arguments');
+					this.sendMessage('Invalid arguments');
 					break;
 				}
 
-				try {
-					const filePath = await this._transcoder.download(args[0]);
-					this.playFile(filePath);
-				} catch(e) {
-					console.log(e);
-					channel.sendMessage('An error occured whilst attempting to download file')
-				}
+				const url = args[0];
+				this._player.addSong(url);
+
 				break;
 				
 			default:
-				channel.sendMessage('Command not found');
+				this.sendMessage('Command not found');
 		}
 	}
 }

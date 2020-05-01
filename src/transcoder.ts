@@ -2,14 +2,15 @@ import Client from './client';
 
 import ytdl = require('ytdl-core');
 import ffmpeg = require('fluent-ffmpeg');
-
+import { Connection } from 'mumble';
+import { existsSync, mkdirSync } from 'fs';
 
 export default class Transcoder {
-	private readonly _client: Client;
+	private readonly _connection: Connection;
 	private readonly _options: ytdl.downloadOptions;
 
-	constructor(client: Client, options?: ytdl.downloadOptions) {
-		this._client =  client;
+	constructor(connection: Connection, options?: ytdl.downloadOptions) {
+		this._connection =  connection;
 		this._options = options;
 	}
 
@@ -23,10 +24,14 @@ export default class Transcoder {
 				throw err;
 			}
 
-			this._client.sendMessage(`Download of <b>${info.title}</b> started...`);
+			Client.sendMessage(`Download of <b>${info.title}</b> started...`, this._connection);
 			return info;
 		})
 		const filePath = `./audio/${(await info).video_id}.mp3`;
+
+		if (!existsSync('./audio/')){
+			mkdirSync('./audio/');
+	}
 
 		const stream = ytdl(url, {
 			quality: 'highestaudio'
