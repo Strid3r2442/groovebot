@@ -1,6 +1,6 @@
-![GitHub package.json version](https://img.shields.io/github/package-json/v/strid3r2442/groovebot?color=darkred&style=flat-square)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/strid3r2442/groovebot?color=red&style=flat-square)
 ![GitHub](https://img.shields.io/github/license/strid3r2442/groovebot?style=flat-square)
-![Maintenance](https://img.shields.io/maintenance/yes/2020?style=flat-square)
+![Maintenance](https://img.shields.io/maintenance/no/2020?style=flat-square)
 
 # Groovebot
 
